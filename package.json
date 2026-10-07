@@ -1,0 +1,13 @@
+{
+  "name": "bingo-premium",
+  "version": "2.0.0",
+  "description": "Bingo Premium - Modelo anterior Violet/Cyan - 134 testes 100% - Tanto faz lado",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": ["bingo", "premium", "violet", "cyan", "tanto-faz-lado", "cartelas", "sorteio"],
+  "author": "SkarCyber",
+  "license": "MIT"
+}

@@ -1,0 +1,20 @@
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependências (não precisa, é vanilla)
+node_modules/
+package-lock.json
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Build
+dist/
+build/
+
+# Temp
+*.tmp
+*.temp

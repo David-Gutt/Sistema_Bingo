@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BINGO PREMIUM - Modelo Anterior - Violet/Cyan - 100% Corrigido</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Outfit',system-ui,sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+.glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08)}
+.glass-strong{background:rgba(10,10,16,0.88);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,0.08)}
+.neon-violet{box-shadow:0 0 24px rgba(168,85,247,0.35),0 0 48px rgba(34,211,238,0.15)}
+.scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none}
+.scroll::-webkit-scrollbar{width:6px;height:6px}.scroll::-webkit-scrollbar-thumb{background:linear-gradient(#a855f7,#22d3ee);border-radius:10px}
+@keyframes winPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(168,85,247,0.7)}50%{transform:scale(1.02);box-shadow:0 0 0 16px rgba(168,85,247,0)}}
+.win-glow{animation:winPulse 1.2s infinite}
+.cartela-premium{position:relative;overflow:hidden;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.08)}
+.cartela-classic{background:white;border:2px solid rgba(0,0,0,0.9);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.cell-premium{position:relative;display:flex;align-items:center;justify-content:center;font-weight:900;border:1px solid rgba(0,0,0,0.12);transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,#a855f7 0%,#22d3ee 100%);color:white;font-weight:900;box-shadow:0 0 20px rgba(168,85,247,0.4)}
+.btn-primary:hover{transform:scale(1.02);box-shadow:0 0 30px rgba(168,85,247,0.6)}
+</style>
+</head>
+<body class="bg-[#050507] text-white min-h-screen overflow-x-hidden">
+<div class="fixed inset-0 pointer-events-none">
+<div class="absolute top-[-200px] right-[-200px] w-[900px] h-[900px] bg-gradient-to-br from-violet-600/20 via-fuchsia-500/10 to-transparent rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-200px] left-[-200px] w-[700px] h-[700px] bg-gradient-to-tr from-cyan-500/20 via-blue-500/10 to-transparent rounded-full blur-[120px]"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-violet-500/[0.07] to-cyan-400/[0.07] rounded-full blur-[100px]"></div>
+</div>
+
+<header class="relative z-20 border-b border-white/[0.06] glass-strong sticky top-0">
+<div class="max-w-[1900px] mx-auto px-5 py-3.5 flex justify-between items-center">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center font-black text-white text-[18px] neon-violet">B</div>
+<div><h1 class="font-black text-[18px] leading-none tracking-tight">BINGO <span class="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent">PREMIUM</span> <span class="text-white/25 text-[9px] tracking-[0.2em] ml-2">MODELO ANTERIOR RESTAURADO</span></h1><div class="text-[10px] text-white/35 tracking-wide mt-1 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.9)]"></span> MODELO PREMIUM VIOLET/CYAN • MODO BINGO TANTO FAZ LADO • 100% CORRIGIDO</div></div>
+</div>
+<div class="flex gap-2.5 items-center">
+<div class="hidden md:flex glass px-3.5 py-1.5 rounded-full text-[11px] font-semibold"><span class="text-white/35">SORTEADOS</span><span id="infoSorteadosHeader" class="text-white font-bold mono ml-2">0/75</span></div>
+<button onclick="abrirConfig()" class="bg-white text-black font-bold px-5 py-2.5 rounded-full text-[11px] tracking-wide hover:bg-white/90 transition">⚙️ CONFIG • MODO BINGO</button>
+</div>
+</div>
+</header>
+
+<main class="relative z-10 max-w-[1900px] mx-auto p-4 grid grid-cols-1 lg:grid-cols-[740px_1fr] gap-5">
+<div class="space-y-5">
+<div class="glass-strong rounded-[24px] p-6">
+<div class="flex justify-between items-center mb-5"><h2 class="font-bold text-[11px] tracking-[0.2em] text-white/40">MÁQUINA DE SORTEIO • GLOBO 360</h2><span id="globoStatus" class="text-[10px] mono px-2.5 py-1 rounded-full glass text-emerald-300 border border-emerald-400/20">● PRONTO</span></div>
+<button onclick="girar()" id="btnGirar" class="w-full h-[64px] btn-primary rounded-[16px] flex items-center justify-center gap-2.5 text-[15px] tracking-wide transition">▶ GIRAR GLOBO QUÂNTICO</button>
+<div class="mt-6 flex gap-5 justify-center items-start">
+<div class="w-[360px] h-[360px] rounded-full border border-white/[0.08] glass overflow-hidden neon-violet relative bg-black/20"><canvas id="globoCanvas" width="360" height="360"></canvas><div class="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/[0.04] to-white/[0.08] pointer-events-none"></div></div>
+<div class="flex flex-col items-center gap-3 pt-2">
+<div class="text-[10px] tracking-[0.25em] text-white/30 font-semibold">BOLA • LETRA+NÚMERO</div>
+<div id="bolaSaida" class="w-[140px] h-[140px] bg-white border-[5px] border-white rounded-full flex flex-col items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.5)] transition-all duration-500 relative"><span class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)] animate-ping"></span><span class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400"></span><div id="bolaLetra" class="text-black/40 font-bold text-[13px] mono">B</div><div id="bolaNumero" class="text-black font-black text-5xl mono">?</div></div>
+<div id="ultimos" class="flex gap-1.5 flex-wrap max-w-[150px] justify-center mt-1"></div>
+</div>
+</div>
+<div class="mt-6 grid grid-cols-3 gap-2.5"><button onclick="desfazer()" class="glass py-3 rounded-full text-[11px] font-bold hover:bg-white/[0.08] transition">↩ DESFAZER</button><button onclick="resetar()" class="glass py-3 rounded-full text-[11px] font-bold hover:bg-white/[0.08] transition">↺ RESET</button><button onclick="ativarProjetor()" class="btn-primary py-3 rounded-full text-[11px]">📺 TV • 460PX</button></div>
+<div class="mt-6"><div class="flex justify-between items-center mb-3"><span class="text-[11px] font-semibold text-white/40 tracking-wide">GRADE COMPLETA • <span id="infoSorteados" class="text-white font-bold mono">0/75</span> • LETRA + NÚMERO</span><div class="flex gap-1.5"><button onclick="setBolas(55)" id="bola55" class="bolaBtn px-3 py-1 rounded-full border border-white/[0.08] text-[10px] text-white/40 bg-black/40 hover:text-white/60 transition">55</button><button onclick="setBolas(75)" id="bola75" class="bolaBtn px-3 py-1 rounded-full bg-white text-black font-bold text-[10px] shadow-[0_0_16px_rgba(255,255,255,0.4)]">75</button><button onclick="setBolas(90)" id="bola90" class="bolaBtn px-3 py-1 rounded-full border border-white/[0.08] text-[10px] text-white/40 bg-black/40 hover:text-white/60 transition">90</button></div></div><div id="gradeNumeros" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-10 gap-1.5 max-h-[420px] overflow-y-auto scrollbar-none pr-1 p-1"></div><div class="mt-4 flex flex-wrap items-center gap-3 text-[11px] font-semibold"><span class="flex items-center gap-1.5 text-white/40"><span class="h-3 w-3 rounded-[4px] bg-black/40 border border-white/10 inline-block"></span> DISPONÍVEL</span><span class="flex items-center gap-1.5 text-white/60"><span class="h-3 w-3 rounded-[4px] bg-gradient-to-br from-violet-500 to-cyan-400 inline-block"></span> SORTEADO</span><span class="flex items-center gap-1.5 text-white"><span class="h-3 w-3 rounded-[4px] bg-white inline-block shadow"></span> ÚLTIMO</span></div></div>
+</div>
+</div>
+
+<div class="space-y-5">
+<div class="glass-strong rounded-[24px] p-5">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold text-[12px] tracking-wide">CARTELA GANHADORA</h2><span id="badgeAtiva" class="hidden bg-white text-black text-[9px] font-black px-2.5 py-1 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.5)]">ATIVA</span></div>
+<div id="cartelaGanhadora" class="flex justify-center min-h-[280px] items-center"><div class="text-center text-white/25 text-[11px] font-medium">Gere cartelas e clique em USAR<br><span class="text-[10px] text-white/20">Sistema avisa BINGO 5 e CHEIA automático - tanto faz o lado!</span></div></div>
+<div id="statusVitoria" class="hidden mt-4 grid grid-cols-2 gap-3"><div class="glass rounded-[14px] p-3"><div class="flex justify-between text-[10px] font-semibold text-white/40"><span>5 LINHA • TANTO FAZ LADO</span><span id="faltaSeq" class="text-violet-300 font-bold">FALTA 5</span></div><div class="w-full h-1.5 bg-white/[0.06] rounded-full mt-2"><div id="barSeq" class="h-1.5 bg-gradient-to-r from-violet-500 to-cyan-400 rounded-full transition-all" style="width:0%"></div></div></div><div class="glass rounded-[14px] p-3"><div class="flex justify-between text-[10px] font-semibold text-white/40"><span>CHEIA</span><span id="faltaCheia" class="text-emerald-300 font-bold">FALTA 24</span></div><div class="w-full h-1.5 bg-white/[0.06] rounded-full mt-2"><div id="barCheia" class="h-1.5 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full transition-all" style="width:0%"></div></div></div></div>
+<div id="painelGanhadoras" class="mt-4 hidden"><div class="glass rounded-[16px] p-4 border border-emerald-400/20 bg-emerald-400/[0.03]"><div class="flex justify-between items-center mb-3"><h3 class="font-black text-[11px] tracking-wide">🏆 GANHADORAS AUTO</h3><button onclick="limparGanhadorasAnunciadas()" class="text-[9px] text-white/30 hover:text-white">LIMPAR</button></div><div id="listaGanhadorasPainel" class="space-y-2 max-h-[200px] overflow-y-auto scrollbar-none"></div></div></div>
+</div>
+
+<div class="glass-strong rounded-[24px] p-5 border border-white/[0.06]">
+<h2 class="font-bold text-[12px] tracking-wide mb-4">GERADOR DE CARTELAS HD</h2>
+<div class="flex gap-2.5 mb-3">
+<input id="qtdGerarMain" type="number" min="1" max="200" value="5" class="flex-1 glass rounded-full px-4 py-3 text-center font-black text-[16px] mono bg-black/30">
+<button onclick="gerarCartelas()" class="btn-primary px-7 rounded-full text-[12px]">GERAR</button>
+</div>
+<div class="grid grid-cols-4 gap-2 mb-3">
+<button onclick="gerarCartelasQtd(1)" class="glass py-2.5 rounded-full text-[11px] font-bold hover:bg-white/[0.08]">+1</button>
+<button onclick="gerarCartelasQtd(10)" class="glass py-2.5 rounded-full text-[11px] font-bold hover:bg-white/[0.08]">+10</button>
+<button onclick="gerarCartelasQtd(50)" class="glass py-2.5 rounded-full text-[11px] font-bold hover:bg-white/[0.08]">+50</button>
+<button onclick="gerarPDF()" class="bg-white text-black py-2.5 rounded-full text-[11px] font-black hover:bg-white/90">📄 PDF</button>
+</div>
+<div id="progressoGerarMain" class="hidden text-[11px] mono text-violet-300 bg-black/40 p-3 rounded-[12px] border border-violet-500/20"></div>
+</div>
+
+<div class="glass-strong rounded-[24px] p-5">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold text-[11px] tracking-wide">PERFIS GERADOS • <span id="totalPerfis" class="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent mono">0</span></h2><button onclick="apagarTodosPerfis()" class="glass px-3 py-1.5 rounded-full text-[10px] hover:bg-red-500/10 hover:text-red-300">🗑️ LIMPAR</button></div>
+<div id="listaPerfis" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[650px] overflow-y-auto scrollbar-none pr-1"><div class="col-span-2 text-center py-10 text-white/20 text-[11px]">Nenhuma cartela gerada</div></div>
+</div>
+</div>
+</main>
+
+<div id="overlay" onclick="fecharConfig()" class="fixed inset-0 bg-black/60 backdrop-blur z-40 hidden"></div>
+<div id="drawer" class="fixed right-0 top-0 w-[420px] max-w-[92vw] h-full bg-[#0a0a0f] border-l border-white/[0.08] z-50 translate-x-full transition-transform duration-300 overflow-y-auto scrollbar-none">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6"><h2 class="font-black text-[16px]">⚙️ CONFIG • MODELO ANTERIOR + MODO BINGO</h2><button onclick="fecharConfig()" class="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/[0.08]">✕</button></div>
+<div class="space-y-5">
+<div class="glass rounded-[20px] p-5 border border-violet-500/20 bg-gradient-to-br from-violet-500/[0.06] to-cyan-400/[0.04]">
+<h3 class="font-black text-[12px] mb-4 flex items-center gap-2">🔊 VOZ - LETRA + NÚMERO</h3>
+<div class="glass rounded-full p-3.5 flex justify-between items-center mb-4 bg-black/20">
+<span class="text-[11px] font-bold tracking-wide">VOZ ATIVA</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" id="vozAtiva" checked onchange="toggleVozAtiva()" class="sr-only peer">
+<div class="w-11 h-6 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-violet-500 peer-checked:to-cyan-400"></div>
+</label>
+</div>
+<div class="mb-4">
+<p class="text-[10px] text-white/40 tracking-widest mb-2.5 font-semibold">TIPO DE VOZ</p>
+<div class="grid grid-cols-2 gap-2">
+<button id="btnFem" onclick="setTipoVoz('feminina')" class="py-3 rounded-full border-2 border-violet-500 bg-violet-500/15 text-violet-300 font-black text-[11px]">♀ FEMININA</button>
+<button id="btnMasc" onclick="setTipoVoz('masculina')" class="py-3 rounded-full border border-white/[0.08] text-white/50 font-bold text-[11px]">♂ MASCULINA</button>
+</div>
+</div>
+<div class="mb-4">
+<p class="text-[10px] text-white/40 tracking-widest mb-2.5 font-semibold">VOZ DO NAVEGADOR</p>
+<select id="selectVoz" onchange="changeVozSelecionada()" class="w-full glass rounded-full px-4 py-3 text-[11px] bg-black/30 text-white border border-white/[0.08]"></select>
+</div>
+<div class="mb-4">
+<p class="text-[10px] text-white/40 tracking-widest mb-2.5 font-semibold">REPETIÇÃO <span id="labelRep" class="text-cyan-300">3X</span></p>
+<div class="grid grid-cols-3 gap-2">
+<button onclick="setRep(1)" id="rep1" class="rep py-2.5 rounded-full glass text-[11px] font-bold">1X</button>
+<button onclick="setRep(2)" id="rep2" class="rep py-2.5 rounded-full glass text-[11px] font-bold">2X</button>
+<button onclick="setRep(3)" id="rep3" class="rep py-2.5 rounded-full bg-white text-black font-black text-[11px]">3X</button>
+</div>
+</div>
+<div class="mb-5">
+<div class="flex justify-between items-center mb-2.5">
+<p class="text-[10px] text-white/40 tracking-widest font-semibold">VELOCIDADE</p>
+<span id="labelVel" class="text-[11px] mono text-cyan-300 font-bold">0.65</span>
+</div>
+<input type="range" id="velocidade" min="0.3" max="1.2" step="0.05" value="0.65" oninput="changeVelocidade()" class="w-full accent-violet-500 h-2">
+</div>
+<button onclick="testarVoz()" class="w-full bg-white text-black font-black py-3.5 rounded-full text-[12px] hover:bg-white/90 transition">▶ TESTAR VOZ - LETRA + NÚMERO</button>
+</div>
+
+<div class="glass rounded-[20px] p-5 border border-violet-500/30 bg-gradient-to-br from-violet-500/[0.08] to-cyan-400/[0.05]">
+<h3 class="font-black text-[11px] mb-1 tracking-wide">🏆 MODO DE VITÓRIA - ESCOLHA COMO GANHA</h3>
+<p class="text-[9px] text-white/40 mb-3">Escolha 1 ou os 2 - BINGO 5 tanto faz o lado!</p>
+<div class="space-y-2.5">
+<div class="flex justify-between items-center glass rounded-[12px] p-3 cursor-pointer border border-white/[0.08] hover:border-violet-500/40 hover:bg-violet-500/5 transition" onclick="toggleModo('seq')">
+<div class="flex-1"><div class="text-[11px] font-black flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center text-[10px]">🎯</span> BINGO 5 NÚMEROS - TANTO FAZ O LADO</div><div class="text-[9px] text-white/45 mt-1 ml-6 leading-[1.3]">Vale horizontal ➡️ , vertical ⬇️ e diagonal ↘️↙️<br>Qualquer lado - 5 seguidos - Tanto faz!</div></div>
+<div class="ml-3 shrink-0"><input type="checkbox" id="modoSeq" checked class="sr-only"><div id="checkSeq" class="w-7 h-7 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 flex items-center justify-center text-white font-black text-[13px] shadow-[0_0_10px_rgba(168,85,247,0.5)]">✓</div></div>
+</div>
+<div class="flex justify-between items-center glass rounded-[12px] p-3 cursor-pointer border border-white/[0.08] hover:border-emerald-500/40 hover:bg-emerald-500/5 transition" onclick="toggleModo('cheia')">
+<div class="flex-1"><div class="text-[11px] font-black flex items-center gap-1.5"><span class="w-5 h-5 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-[10px]">🏆</span> CARTELA CHEIA - 24 NÚMEROS + FREE</div><div class="text-[9px] text-white/45 mt-1 ml-6 leading-[1.3]">Marca todos os números<br>24 números + FREE = 25 marcações!</div></div>
+<div class="ml-3 shrink-0"><input type="checkbox" id="modoCheia" checked class="sr-only"><div id="checkCheia" class="w-7 h-7 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 flex items-center justify-center text-white font-black text-[13px] shadow-[0_0_10px_rgba(52,211,153,0.5)]">✓</div></div>
+</div>
+</div>
+<div id="modoInfo" class="mt-3 p-2.5 rounded-[10px] bg-black/50 border border-white/[0.06] text-[10px] text-center font-medium">✅ 2 modos ativos - Vai avisar BINGO 5 (tanto faz o lado) e CHEIA!</div>
+<div class="mt-3 grid grid-cols-3 gap-1.5 text-[8px]">
+<div class="glass rounded-full px-2 py-1.5 text-center text-white/50 border border-white/[0.06]">➡️ Horizontal<br><span class="text-[7px] text-white/30">Linha completa</span></div>
+<div class="glass rounded-full px-2 py-1.5 text-center text-white/50 border border-white/[0.06]">⬇️ Vertical<br><span class="text-[7px] text-white/30">Coluna completa</span></div>
+<div class="glass rounded-full px-2 py-1.5 text-center text-white/50 border border-white/[0.06]">↘️ Diagonal<br><span class="text-[7px] text-white/30">Canto a canto</span></div>
+</div>
+</div>
+
+<div class="glass rounded-[20px] p-5">
+<h3 class="font-black text-[11px] mb-3 tracking-wide">🎮 JOGO</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center"><span class="text-[11px] font-medium">Bolas</span><div class="flex gap-1"><button onclick="setBolas(55)" id="bolaCfg55" class="bolaBtn-config px-3 py-1.5 rounded-full text-[10px] border border-white/10">55</button><button onclick="setBolas(75)" id="bolaCfg75" class="bolaBtn-config px-3 py-1.5 rounded-full text-[10px] bg-white text-black font-bold">75</button><button onclick="setBolas(90)" id="bolaCfg90" class="bolaBtn-config px-3 py-1.5 rounded-full text-[10px] border border-white/10">90</button></div></div>
+<div class="flex justify-between items-center"><span class="text-[11px] font-medium">Projetor TV • Globo 460</span><button onclick="ativarProjetor();fecharConfig()" class="btn-primary px-4 py-1.5 rounded-full text-[10px]">📺 ABRIR</button></div>
+</div>
+</div>
+<div class="glass rounded-[20px] p-5 border border-white/[0.06]">
+<h3 class="font-black text-[11px] mb-3">📄 PDF - 6 POR FOLHA</h3>
+<button onclick="gerarPDF();fecharConfig()" class="w-full btn-primary py-3.5 rounded-full text-[12px]">📄 GERAR PDF HD - 6 POR FOLHA</button>
+<p class="text-[9px] text-white/30 mt-2 text-center">Cartelas HD 6 por A4 - Testado</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="modalVitoria" class="fixed inset-0 bg-black/80 backdrop-blur z-[100] hidden flex items-center justify-center p-4"><div class="bg-[#10101a] border border-violet-500/30 rounded-[24px] p-7 max-w-md w-full text-center shadow-[0_0_60px_rgba(168,85,247,0.3)]"><div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center text-2xl mb-4 shadow-[0_0_20px_rgba(168,85,247,0.5)]">🏆</div><h2 id="textoVitoria" class="font-black text-2xl">BINGO!</h2><p id="subVitoria" class="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent font-bold text-[12px] mt-1">CHEIA!</p><div id="perfilVitoria" class="text-[10px] text-white/40 mono mt-4 text-left"></div><button onclick="fecharVitoria()" class="mt-6 w-full bg-white text-black font-black py-3 rounded-full text-[11px]">FECHAR</button></div></div>
+
+<div id="telaProjetor" class="fixed inset-0 bg-[#050507] z-[200] hidden flex flex-col">
+<div class="flex justify-between items-center px-6 py-4 border-b border-white/[0.06] bg-[#0a0a10]/90 backdrop-blur-xl shrink-0">
+<div class="flex items-center gap-5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center font-black text-white text-[16px] shadow-[0_0_16px_rgba(168,85,247,0.4)]">B</div>
+<h1 class="font-black text-[17px] tracking-tight">BINGO <span class="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent">PREMIUM</span></h1>
+<span class="text-white/20 text-[10px] tracking-[0.2em] ml-1">PROJETOR TV • MODELO ANTERIOR</span>
+</div>
+<div class="h-5 w-px bg-white/[0.08]"></div>
+<div class="flex items-center gap-2.5">
+<span id="projTotal" class="bg-white text-black font-black px-3.5 py-1.5 rounded-full text-[11px] mono shadow-[0_0_12px_rgba(255,255,255,0.3)]">0/75</span>
+<span id="projGloboStatus" class="glass px-3 py-1.5 rounded-full text-[10px] font-bold text-emerald-300 border border-emerald-400/20 tracking-wide">● PRONTO</span>
+<span id="projInfoSorteados" class="hidden">0/75</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5">
+<button onclick="girar()" class="bg-gradient-to-r from-violet-500 to-cyan-400 text-white font-black px-6 py-2.5 rounded-full text-[11px] tracking-wide shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:scale-[1.02] transition">▶ GIRAR GLOBO</button>
+<button onclick="desativarProjetor()" class="glass px-4 py-2.5 rounded-full text-[11px] font-bold hover:bg-white/[0.08] transition border border-white/[0.08]">✕ SAIR ESC</button>
+</div>
+</div>
+<div class="flex-1 flex gap-6 p-6 overflow-hidden bg-gradient-to-br from-[#050507] via-[#08080f] to-[#050507]">
+<div class="w-[400px] shrink-0 flex flex-col gap-4 overflow-hidden">
+<div class="glass-strong rounded-[20px] p-5 border border-white/[0.06] flex-1 flex flex-col overflow-hidden">
+<div class="flex justify-between items-center mb-4 shrink-0">
+<h3 class="font-black text-[11px] tracking-[0.2em] text-white/50 flex items-center gap-2"><span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span> SORTEADOS • TANTO FAZ LADO</h3>
+<span class="text-[10px] mono text-white/30">Últimos 18</span>
+</div>
+<div id="projUltimos" class="space-y-2.5 flex-1 overflow-y-auto scrollbar-none pr-1 -mr-1"></div>
+</div>
+<div class="glass rounded-[16px] p-4 border border-white/[0.06] shrink-0 space-y-2.5">
+<div class="flex gap-2">
+<button onclick="desfazer()" class="flex-1 glass py-2.5 rounded-full text-[10px] font-bold hover:bg-white/[0.08] transition border border-white/[0.06]">↩ DESFAZER</button>
+<button onclick="resetar()" class="flex-1 glass py-2.5 rounded-full text-[10px] font-bold hover:bg-red-500/10 hover:text-red-300 transition border border-white/[0.06]">↺ RESET</button>
+</div>
+<div class="pt-3 border-t border-white/[0.06]">
+<p class="text-[9px] text-white/30 tracking-widest font-semibold mb-2">CARTELA ATIVA</p>
+<div id="projCartelaAtiva" class="text-[11px] text-white/60">Nenhuma selecionada</div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center relative overflow-hidden py-4">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-violet-600/[0.06] via-transparent to-cyan-500/[0.06] rounded-full blur-[60px] pointer-events-none"></div>
+<div class="relative flex flex-col items-center">
+<div id="projGlobo" class="w-[420px] h-[420px] lg:w-[460px] lg:h-[460px] rounded-full border border-white/[0.08] glass overflow-hidden neon-violet bg-[#0a0a14]/60 shadow-[0_0_50px_rgba(168,85,247,0.12),inset_0_0_30px_rgba(0,0,0,0.5)] relative shrink-0">
+<canvas id="projGloboCanvas" width="460" height="460" class="absolute inset-0 w-full h-full"></canvas>
+<div class="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.04] pointer-events-none"></div>
+<div class="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,0,0,0.7)] pointer-events-none"></div>
+</div>
+<div id="projBola" class="w-[160px] h-[160px] lg:w-[180px] lg:h-[180px] bg-white border-[5px] border-white rounded-full flex flex-col items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.5),0_8px_24px_rgba(0,0,0,0.3)] -mt-14 relative z-20 transition-all duration-500 shrink-0">
+<div id="projLetra" class="text-black/40 font-black text-[13px] lg:text-[14px] mono tracking-[0.2em]">B</div>
+<div id="projNumero" class="text-black font-black text-5xl lg:text-6xl mono leading-none -mt-1">?</div>
+<span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.9)] animate-ping"></span>
+<span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.9)]"></span>
+</div>
+<div id="projInfo" class="mt-6 text-center min-h-[50px] flex items-center justify-center">
+<p class="text-white/30 text-[13px] font-medium tracking-wide">Aguardando sorteio • Modelo anterior restaurado • Globo 460px</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let modoBolas=75, drawn=[], current=null, selectedPerfil=null, perfis=[], ultimoPerfilNum=0, tipoVoz='feminina', vozAtiva=true, vozSelecionada=null, repeticao=3, velocidade=0.65, modos={seq:true,cheia:true}, vozes=[], modeloAtual='classic'
+const ranges={55:[[1,11],[12,22],[23,33],[34,44],[45,55]],75:[[1,15],[16,30],[31,45],[46,60],[61,75]],90:[[1,18],[19,36],[37,54],[55,72],[73,90]]}
+function getLetra(n){try{const r=ranges[modoBolas]; if(!r||!n) return 'B'; if(n<=r[0][1]) return 'B'; if(n<=r[1][1]) return 'I'; if(n<=r[2][1]) return 'N'; if(n<=r[3][1]) return 'G'; return 'O'}catch(e){return 'B'}}
+
+function toggleModo(tipo){
+ try{
+  if(tipo=='seq') modos.seq=!modos.seq;
+  if(tipo=='cheia') modos.cheia=!modos.cheia;
+  if(!modos.seq && !modos.cheia){alert('⚠️ Precisa deixar pelo menos 1 modo ativo! Ativando BINGO 5 de volta - tanto faz o lado!'); modos.seq=true;}
+  atualizarUIModos(); salvar(); renderGanhadora(); renderPerfis(); renderGrade();
+  console.log(`🏆 Modo: BINGO 5 tanto faz lado=${modos.seq} | CHEIA=${modos.cheia}`);
+ }catch(e){console.error(e)}
+}
+function atualizarUIModos(){
+ try{
+  let chkSeq=document.getElementById('modoSeq'); let chkCheia=document.getElementById('modoCheia');
+  let checkSeq=document.getElementById('checkSeq'); let checkCheia=document.getElementById('checkCheia'); let info=document.getElementById('modoInfo');
+  if(chkSeq) chkSeq.checked=modos.seq; if(chkCheia) chkCheia.checked=modos.cheia;
+  if(checkSeq){if(modos.seq){checkSeq.className='w-7 h-7 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 flex items-center justify-center text-white font-black text-[13px] shadow-[0_0_10px_rgba(168,85,247,0.5)]'; checkSeq.innerText='✓';} else {checkSeq.className='w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/30'; checkSeq.innerText='';}}
+  if(checkCheia){if(modos.cheia){checkCheia.className='w-7 h-7 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 flex items-center justify-center text-white font-black text-[13px] shadow-[0_0_10px_rgba(52,211,153,0.5)]'; checkCheia.innerText='✓';} else {checkCheia.className='w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/30'; checkCheia.innerText='';}}
+  if(info){
+    if(modos.seq && modos.cheia) info.innerHTML='✅ 2 modos ativos - Vai avisar <span class="text-violet-300 font-bold">BINGO 5 (tanto faz o lado)</span> e <span class="text-emerald-300 font-bold">CHEIA</span>! - Modelo anterior restaurado';
+    else if(modos.seq) info.innerHTML='🎯 Só <span class="text-violet-300 font-bold">BINGO 5 - TANTO FAZ O LADO</span> - Horizontal ➡️ , vertical ⬇️ ou diagonal ↘️!';
+    else if(modos.cheia) info.innerHTML='🏆 Só <span class="text-emerald-300 font-bold">CARTELA CHEIA</span> - 24 números + FREE!';
+  }
+ }catch(e){}
+}
+
+function gerarCartela(num){
+ let cols=[]; for(let c=0;c<5;c++){let [min,max]=ranges[modoBolas][c]; let pool=[]; for(let i=min;i<=max;i++) pool.push(i); for(let i=pool.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]} cols.push(pool.slice(0,5))}
+ let grid=[]; for(let r=0;r<5;r++){let row=[]; for(let c=0;c<5;c++){ if(r==2&&c==2) row.push(null); else row.push(cols[c][r]) } grid.push(row)}
+ return {id:'BGO-'+Math.random().toString(36).substr(2,6).toUpperCase(), perfilNum:num, modo:modoBolas, modelo:modeloAtual, grid, criado:Date.now()}
+}
+function cartelaHTML(p, pequena=false, ganhou=false, linhas=[]){
+ let size=pequena?28:44; let w=pequena?270:380; let html=''
+ html+=`<div class="${ganhou?'win-glow':''} cartela-classic cartela-premium" style="width:${w}px"><div class="bg-black text-white font-black tracking-[0.35em] text-center py-3 flex justify-between px-4 items-center" style="font-size:${pequena?11:16}px"><span>B I N G O</span><span class="text-[8px] bg-gradient-to-r from-violet-500 to-cyan-400 text-white px-2.5 py-1 rounded-full">${p.modo}B • ${p.perfilNum}</span></div><div class="px-2.5 py-1.5 flex justify-between text-[7px] text-black/40 mono"><span>PERFIL ${p.perfilNum}</span><span>${p.id}</span><span>BINGO PREMIUM</span></div><div style="display:grid;grid-template-columns:repeat(5,${size}px);gap:0;padding:0 2px 2px 2px">`
+ for(let r=0;r<5;r++) for(let c=0;c<5;c++){
+  let v=p.grid[r][c]; let free=r==2&&c==2; let marc=free||drawn.includes(v); let gray=(r+c)%2==0; let venc=linhas.some(l=>l.some(pos=>pos[0]==r&&pos[1]==c))
+  html+=`<div class="cell-premium" style="width:${size}px;height:${size}px;background:${free?'#000':marc?'#22c55e':gray?'#f3f4f6':'white'};color:${marc||free?'white':'black'};font-size:${free?7:pequena?10:15}px;${venc?'outline:3px solid #a855f7;z-index:2':''}">${free?'<div class="text-center leading-[0.9]"><div style="font-size:8px">BINGO</div><div style="font-size:5px">FREE</div></div>':v||''}${marc&&!free?'<span style="position:absolute;top:1px;right:2px;font-size:10px">✓</span>':''}</div>`
+ }
+ html+=`</div></div>`; return html
+}
+function renderGanhadora(){
+ let div=document.getElementById('cartelaGanhadora'); let badge=document.getElementById('badgeAtiva')
+ if(!selectedPerfil){div.innerHTML='<div class="text-center py-12 text-white/25 text-[11px] font-medium">Gere cartelas e clique em USAR<br><span class="text-[10px] text-white/20">Sistema avisa BINGO 5 (tanto faz o lado) e CHEIA automático</span></div>'; badge.classList.add('hidden'); document.getElementById('statusVitoria').classList.add('hidden'); return}
+ badge.classList.remove('hidden'); 
+ let win=checkVitoria(selectedPerfil)
+ if(win.venceu){badge.innerText=win.venceuCheia?'🏆 CHEIA!':'🎯 5 TANTO FAZ LADO!'; badge.className='bg-gradient-to-r from-violet-500 to-cyan-400 text-white text-[9px] font-black px-2.5 py-1 rounded-full animate-pulse'} else {badge.innerText='ATIVA'; badge.className='bg-white text-black text-[9px] font-black px-2.5 py-1 rounded-full'}
+ div.innerHTML=cartelaHTML(selectedPerfil,false,win.venceu,win.linhas)
+ document.getElementById('statusVitoria').classList.remove('hidden')
+ let minFalta=5; if(win.linhas.length==0){for(let linha of getLinhas()){let falta=linha.filter(([r,c])=>{let v=selectedPerfil.grid[r][c];return v!==null&&!drawn.includes(v)}).length; if(falta<minFalta) minFalta=falta}} else minFalta=0
+ document.getElementById('faltaSeq').innerText=minFalta==0?'BINGO! TANTO FAZ LADO!':`FALTA ${minFalta}`; document.getElementById('barSeq').style.width=`${((5-minFalta)/5*100)}%`
+ let total=selectedPerfil.grid.flat().filter(v=>v!==null).length; let marcados=selectedPerfil.grid.flat().filter(v=>v===null||drawn.includes(v)).length; let faltaCheia=total-(marcados-1); if(faltaCheia<0) faltaCheia=0
+ document.getElementById('faltaCheia').innerText=faltaCheia==0?'BINGO!':`FALTA ${faltaCheia}`; document.getElementById('barCheia').style.width=`${(marcados/(total+1)*100)}%`
+}
+function getLinhas(){let l=[];for(let r=0;r<5;r++)l.push([[r,0],[r,1],[r,2],[r,3],[r,4]]);for(let c=0;c<5;c++)l.push([[0,c],[1,c],[2,c],[3,c],[4,c]]);l.push([[0,0],[1,1],[2,2],[3,3],[4,4]]);l.push([[0,4],[1,3],[2,2],[3,1],[4,0]]);return l}
+function checkVitoria(p){let linhas=getLinhas(),vencedoras=[];for(let linha of linhas){let ok=true;for(let [r,c] of linha){let v=p.grid[r][c];if(v===null)continue;if(!drawn.includes(v))ok=false}if(ok)vencedoras.push(linha)}let total=p.grid.flat().filter(v=>v!==null).length;let marcados=p.grid.flat().filter(v=>v===null||drawn.includes(v)).length;let seq=vencedoras.length>0,cheia=marcados>=total+1;let venceu=(modos.seq&&seq)||(modos.cheia&&cheia);if(modos.seq&&modos.cheia)venceu=seq||cheia;return{venceu,venceuSeq:seq,venceuCheia:cheia,linhas:vencedoras,total,marcados}}
+let ganhadorasAnunciadas=new Set(), historicoGanhadoras=[]
+function checarTodasVitorias(){let vencedoras=[];perfis.forEach(p=>{let check=checkVitoria(p);if(check.venceu){let tipo=check.venceuCheia?'CARTELA COMPLETA':'BINGO 5 EM LINHA - TANTO FAZ O LADO'; vencedoras.push({perfil:p,check:check,tipo:tipo,isCheia:check.venceuCheia,isLinha:check.venceuSeq&&!check.venceuCheia})}});vencedoras.sort((a,b)=>{if(a.isCheia&&!b.isCheia)return-1;if(!a.isCheia&&b.isCheia)return 1;return b.perfil.perfilNum-a.perfil.perfilNum});return vencedoras}
+function checarNovasGanhadoras(){let todas=checarTodasVitorias();let novas=todas.filter(v=>!ganhadorasAnunciadas.has(v.perfil.id));return{todas,novas}}
+function renderPerfis(){
+ let div=document.getElementById('listaPerfis'); let totalEl=document.getElementById('totalPerfis'); if(!div) return; if(totalEl) totalEl.innerText=perfis.length
+ if(perfis.length==0){div.innerHTML='<div class="col-span-2 text-center py-10 text-white/20 text-[11px]">Nenhuma cartela gerada - Modelo anterior restaurado</div>';return}
+ let lista=[...perfis].sort((a,b)=>b.perfilNum-a.perfilNum).filter(p=>p&&p.grid)
+ div.innerHTML=lista.map(p=>{
+  let ativa=selectedPerfil&&selectedPerfil.id==p.id
+  let check=checkVitoria(p)
+  let isGanhadora=check.venceu
+  let isCheia=check.venceuCheia
+  let badgeGanhadora=isGanhadora?(isCheia?' <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 text-black text-[7px] px-1.5 py-0.5 rounded-full ml-1 animate-pulse">🏆 CHEIA</span>':' <span class="bg-gradient-to-r from-violet-500 to-cyan-400 text-white text-[7px] px-1.5 py-0.5 rounded-full ml-1 animate-pulse">🎯 5 TANTO FAZ LADO</span>'):''
+  return `<div class="glass ${isGanhadora?'!border-violet-500/50 bg-violet-500/[0.05]':''} ${ativa?'!border-white/20 bg-white/[0.05]':''} rounded-[16px] p-3 transition-all"><div class="flex justify-between items-center mb-2.5"><span class="font-bold text-[11px]">PERFIL ${p.perfilNum}${badgeGanhadora}${ativa?' <span class="bg-white text-black text-[7px] px-1.5 py-0.5 rounded-full ml-1">● ATIVA</span>':''}</span><span class="text-[7px] text-white/30 mono">${p.id}</span></div><div class="flex justify-center pointer-events-none"><div style="transform:scale(0.85);transform-origin:center;margin:-8px 0">${cartelaHTML(p,true)}</div></div><div class="grid grid-cols-3 gap-1.5 mt-3"><button data-action="usar" data-id="${p.id}" class="bg-white hover:bg-white/90 text-black font-black py-2 rounded-full text-[10px] transition">▶ USAR</button><button data-action="png" data-id="${p.id}" class="glass hover:bg-white/[0.08] text-white font-bold py-2 rounded-full text-[10px] transition">📷 PNG</button><button data-action="apagar" data-id="${p.id}" class="glass hover:bg-red-500/10 text-white font-bold py-2 rounded-full text-[10px] transition">🗑️</button></div></div>`
+ }).join('')
+ div.querySelectorAll('button[data-action]').forEach(btn=>{btn.onclick=(e)=>{e.preventDefault();e.stopPropagation(); let a=btn.getAttribute('data-action'); let id=btn.getAttribute('data-id'); if(a=='usar') usarPerfil(id); else if(a=='png') baixarCartelaPNG(id); else if(a=='apagar') apagarPerfil(id)}})
+}
+function usarPerfil(id){let p=perfis.find(x=>x.id==id); if(!p) return; selectedPerfil=p; salvar(); renderGanhadora(); renderPerfis(); document.getElementById('cartelaGanhadora').scrollIntoView({behavior:'smooth'})}
+function apagarPerfil(id){let p=perfis.find(x=>x.id==id); if(!p) return; if(!confirm(`Apagar PERFIL ${p.perfilNum}?`)) return; perfis=perfis.filter(x=>x.id!=id); if(selectedPerfil&&selectedPerfil.id==id) selectedPerfil=null; salvar(); renderPerfis(); renderGanhadora()}
+function apagarTodosPerfis(){if(perfis.length==0) return; if(!confirm(`Apagar ${perfis.length} cartelas?`)) return; perfis=[]; selectedPerfil=null; ultimoPerfilNum=0; salvar(); renderPerfis(); renderGanhadora()}
+function gerarCartelas(){let qtd=parseInt(document.getElementById('qtdGerarMain').value)||5; gerarCartelasQtd(qtd)}
+function gerarCartelasQtd(qtd){
+ if(qtd<1)qtd=1; if(qtd>200) qtd=200; let prog=document.getElementById('progressoGerarMain'); prog.classList.remove('hidden'); prog.innerText=`⏳ Gerando ${qtd}... Modelo anterior`; let gerados=0
+ function lote(){let batch=Math.min(30,qtd-gerados); for(let i=0;i<batch;i++){ultimoPerfilNum++; perfis.push(gerarCartela(ultimoPerfilNum)); gerados++} prog.innerText=`✓ ${gerados}/${qtd} • Perfil ${ultimoPerfilNum}`; if(gerados<qtd) setTimeout(lote,15); else{prog.innerText=`✅ ${qtd} GERADAS! Modelo anterior restaurado!`; setTimeout(()=>prog.classList.add('hidden'),3000); salvar(); renderPerfis(); if(drawn.length>0){let res=checarNovasGanhadoras(); if(res.novas.length>0) mostrarVitoriaGlobal(res.novas)}}}
+ lote()
+}
+function girar(){
+ if(globoGirando||projGirando) return; let disp=Array.from({length:modoBolas},(_,i)=>i+1).filter(n=>!drawn.includes(n)); if(disp.length==0){alert('🎉 Todos sorteados!');return}
+ let n=disp[Math.floor(Math.random()*disp.length)]; let btn=document.getElementById('btnGirar'); if(btn){btn.disabled=true; btn.innerText='🎲 GIRANDO...'}; let status=document.getElementById('globoStatus'); if(status) status.innerText='● GIRANDO...'
+ let projAberto=!document.getElementById('telaProjetor').classList.contains('hidden')
+ function finalizar(){drawn.push(n); current=n; renderGrade(); renderUltimos(); renderGanhadora(); renderProj(); falar(getLetra(n),n); let resultado=checarNovasGanhadoras(); if(resultado.novas.length>0){mostrarVitoriaGlobal(resultado.novas)} else if(selectedPerfil){let w=checkVitoria(selectedPerfil); if(w.venceu && !ganhadorasAnunciadas.has(selectedPerfil.id)){mostrarVitoriaGlobal([{perfil:selectedPerfil, check:w, tipo:w.venceuCheia?'CARTELA COMPLETA':'BINGO 5 - TANTO FAZ O LADO', isCheia:w.venceuCheia, isLinha:w.venceuSeq && !w.venceuCheia}])}} salvar(); if(btn){btn.disabled=false; btn.innerText='▶ GIRAR GLOBO QUÂNTICO'} if(status) status.innerText='● PRONTO'}
+ if(projAberto){girarGlobo(n,()=>{}); girarProjGloboAnimacao(n,finalizar)} else {girarGlobo(n,finalizar)}
+}
+function desfazer(){if(drawn.length==0)return; drawn.pop(); current=drawn[drawn.length-1]||null; if(current){document.getElementById('bolaNumero').innerText=current; document.getElementById('bolaLetra').innerText=getLetra(current)} else{document.getElementById('bolaNumero').innerText='?';document.getElementById('bolaLetra').innerText='B'} renderGrade(); renderUltimos(); renderGanhadora(); renderProj(); salvar()}
+function resetar(){if(!confirm('Resetar sorteio?'))return; drawn=[]; current=null; ganhadorasAnunciadas.clear(); historicoGanhadoras=[]; document.getElementById('bolaNumero').innerText='?';document.getElementById('bolaLetra').innerText='B'; renderGrade(); renderUltimos(); renderGanhadora(); renderProj(); renderPerfis(); fecharVitoria(); salvar()}
+function renderGrade(){
+ let div=document.getElementById('gradeNumeros'); 
+ if(!div) return;
+ let numeros = Array.from({length:modoBolas},(_,i)=>i+1);
+ div.innerHTML=numeros.map(n=>{
+  let s=drawn.includes(n); 
+  let atual=n==current; 
+  let letra=getLetra(n);
+  let classe = s ? (atual ? 'bg-white text-black border-white shadow-[0_0_22px_rgba(255,255,255,0.7)] scale-[1.08] z-10 ring-2 ring-white' : 'bg-gradient-to-br from-violet-500 to-cyan-400 text-white border-violet-400/60 shadow-[0_0_14px_rgba(168,85,247,0.5)]') : 'bg-black/50 border border-white/[0.15] text-white/60 hover:text-white/80 hover:border-white/25 hover:bg-white/[0.08] backdrop-blur';
+  let letraClasse = atual ? 'text-black/70 font-black' : (s ? 'text-white font-black' : 'text-violet-300/80 font-black');
+  let numClasse = atual ? 'text-black' : 'text-white';
+  return `<div class="w-[52px] h-[52px] rounded-[12px] flex flex-col items-center justify-center font-bold transition-all ${classe} border relative overflow-hidden group"><span class="text-[11px] tracking-[0.18em] ${letraClasse} leading-none mt-[2px]">${letra}</span><span class="text-[15px] mono font-black leading-none ${numClasse}">${n}</span>${atual ? '<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse"></span><span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>' : ''}${s && !atual ? '<span class="absolute bottom-0.5 right-0.5 w-1.5 h-1.5 bg-white/60 rounded-full"></span>' : ''}</div>`
+ }).join('')
+ document.getElementById('infoSorteados').innerText=`${drawn.length}/${modoBolas}`; 
+ document.getElementById('infoSorteadosHeader').innerText=`${drawn.length}/${modoBolas}`; 
+ let projTotalEl=document.getElementById('projTotal'); if(projTotalEl) projTotalEl.innerText=`${drawn.length}/${modoBolas}`;
+ let painel=document.getElementById('painelGanhadoras'); let listaPainel=document.getElementById('listaGanhadorasPainel'); 
+ if(painel && listaPainel){ if(historicoGanhadoras.length>0){ painel.classList.remove('hidden'); listaPainel.innerHTML=getHistoricoGanhadorasHTML()} else { painel.classList.add('hidden')}}
+}
+function renderUltimos(){let div=document.getElementById('ultimos'); if(!div) return; let ult=drawn.slice(-6).reverse(); div.innerHTML=ult.map(n=>`<div class="w-9 h-9 rounded-full bg-white text-black flex flex-col items-center justify-center shadow-[0_0_12px_rgba(255,255,255,0.3)] border border-white"><span class="text-[6px] opacity-50 font-bold tracking-widest">${getLetra(n)}</span><span class="font-black text-[11px] mono">${n}</span></div>`).join('')||'<span class="text-white/20 text-[10px] font-medium">Aguardando</span>'}
+function setBolas(n){
+ if(drawn.length>0&&!confirm(`Trocar para ${n} bolas? Isso vai resetar.`))return; 
+ modoBolas=n; drawn=[]; current=null; ganhadorasAnunciadas.clear(); historicoGanhadoras=[];
+ document.querySelectorAll('.bolaBtn').forEach(b=>b.className='bolaBtn px-3 py-1 rounded-full border border-white/[0.08] text-[10px] text-white/40 bg-black/40 hover:text-white/60 transition'); 
+ let btn=document.getElementById('bola'+n); if(btn) btn.className='bolaBtn px-3 py-1 rounded-full bg-white text-black font-bold text-[10px] shadow-[0_0_16px_rgba(255,255,255,0.4)]'; 
+ document.querySelectorAll('.bolaBtn-config').forEach(b=>b.className='bolaBtn-config px-3 py-1.5 rounded-full text-[10px] border border-white/10 bg-black/40 text-white/40'); 
+ let cfgBtn=document.getElementById('bolaCfg'+n); if(cfgBtn) cfgBtn.className='bolaBtn-config px-3 py-1.5 rounded-full text-[10px] bg-white text-black font-bold'; 
+ document.getElementById('bolaNumero').innerText='?'; document.getElementById('bolaLetra').innerText='B';
+ renderGrade(); renderUltimos(); renderGanhadora(); renderProj(); salvar(); initGlobo(); initProjGlobo(); atualizarUIConfig(); atualizarUIModos();
+}
+function abrirConfig(){let drawer=document.getElementById('drawer'); let overlay=document.getElementById('overlay'); if(!drawer||!overlay) return; drawer.classList.remove('translate-x-full');overlay.classList.remove('hidden'); setTimeout(()=>{carregarVozes();atualizarUIConfig();atualizarUIModos()},100)}
+function fecharConfig(){let drawer=document.getElementById('drawer'); let overlay=document.getElementById('overlay'); if(!drawer||!overlay) return; drawer.classList.add('translate-x-full');overlay.classList.add('hidden')}
+function atualizarUIConfig(){
+  let chk=document.getElementById('vozAtiva'); if(chk) chk.checked=vozAtiva;
+  let btnFem=document.getElementById('btnFem'); let btnMasc=document.getElementById('btnMasc');
+  if(btnFem&&btnMasc){ if(tipoVoz=='feminina'){btnFem.className='py-3 rounded-full border-2 border-violet-500 bg-violet-500/15 text-violet-300 font-black text-[11px] shadow-[0_0_12px_rgba(168,85,247,0.3)]'; btnMasc.className='py-3 rounded-full border border-white/[0.08] text-white/50 font-bold text-[11px] hover:bg-white/[0.05]'} else {btnMasc.className='py-3 rounded-full border-2 border-violet-500 bg-violet-500/15 text-violet-300 font-black text-[11px] shadow-[0_0_12px_rgba(168,85,247,0.3)]'; btnFem.className='py-3 rounded-full border border-white/[0.08] text-white/50 font-bold text-[11px] hover:bg-white/[0.05]'}} 
+  document.querySelectorAll('.rep').forEach(b=>b.className='rep py-2.5 rounded-full glass text-[11px] font-bold border border-white/[0.06] hover:bg-white/[0.05]'); 
+  let repEl=document.getElementById('rep'+repeticao); if(repEl) repEl.className='rep py-2.5 rounded-full bg-white text-black font-black text-[11px] shadow-[0_0_12px_rgba(255,255,255,0.4)]'; 
+  let labelRep=document.getElementById('labelRep'); if(labelRep) labelRep.innerText=repeticao+'X'; 
+  let velEl=document.getElementById('velocidade'); let labelVel=document.getElementById('labelVel'); 
+  if(velEl) velEl.value=velocidade; if(labelVel) labelVel.innerText=velocidade.toFixed(2)
+}
+function toggleVozAtiva(){let chk=document.getElementById('vozAtiva'); if(!chk) return; vozAtiva=chk.checked; salvar(); atualizarUIConfig(); if(vozAtiva) testarVoz(); else speechSynthesis.cancel()}
+function carregarVozes(){if(typeof speechSynthesis==='undefined') return; vozes=speechSynthesis.getVoices(); let sel=document.getElementById('selectVoz'); if(!sel) return; sel.innerHTML=''; let lista=filtrarVozes(tipoVoz); lista.forEach(v=>{let o=document.createElement('option'); o.value=v.name; o.text=`${v.name} (${v.lang})`; if(vozSelecionada&&v.name==vozSelecionada.name) o.selected=true; sel.appendChild(o)}); if(lista.length>0&&!vozSelecionada){vozSelecionada=lista[0]; salvar()} atualizarUIConfig()}
+function filtrarVozes(tipo){if(!vozes||vozes.length==0) return []; let pt=vozes.filter(v=>v.lang.toLowerCase().includes('pt')); let lista=pt.length>0?pt:vozes; if(tipo=='feminina'){let fem=lista.filter(v=>{let n=v.name.toLowerCase(); return n.includes('female')||n.includes('luciana')||n.includes('maria')||n.includes('fernanda')}); return fem.length>0?fem:lista} else {let masc=lista.filter(v=>{let n=v.name.toLowerCase(); return n.includes('male')||n.includes('felipe')||n.includes('daniel')||n.includes('ricardo')}); return masc.length>0?masc:lista}}
+function setTipoVoz(t){tipoVoz=t; vozSelecionada=null; carregarVozes(); atualizarUIConfig(); salvar(); setTimeout(()=>testarVoz(),400)}
+function changeVozSelecionada(){let sel=document.getElementById('selectVoz'); if(!sel) return; let nome=sel.value; let enc=vozes.find(v=>v.name==nome); if(enc){vozSelecionada=enc; salvar(); atualizarUIConfig(); testarVoz()}}
+function setRep(n){repeticao=n; atualizarUIConfig(); salvar()}
+function changeVelocidade(){let velEl=document.getElementById('velocidade'); if(!velEl) return; velocidade=parseFloat(velEl.value); atualizarUIConfig(); salvar()}
+function falar(letra,numero){
+ if(!vozAtiva) return
+ if(typeof speechSynthesis==='undefined') return
+ speechSynthesis.cancel(); 
+ let textoCompleto=`Letra ${letra}, número ${numero}. ${letra}, ${numero}`;
+ for(let i=0;i<repeticao;i++){
+  setTimeout(()=>{
+   let utter=new SpeechSynthesisUtterance(textoCompleto); 
+   if(vozSelecionada) utter.voice=vozSelecionada; 
+   utter.lang='pt-BR'; 
+   utter.rate=velocidade; 
+   utter.pitch=1; 
+   utter.volume=1; 
+   speechSynthesis.speak(utter)
+  },i*2800)
+ }
+}
+function falarGanhadora(perfilNum, tipo){
+ if(!vozAtiva) return; 
+ speechSynthesis.cancel(); 
+ let texto=tipo=='CHEIA'?`Bingo! Cartela completa! Perfil ${perfilNum} venceu!`:`Bingo cinco em linha tanto faz o lado! Perfil ${perfilNum} venceu!`; 
+ let utter=new SpeechSynthesisUtterance(texto); 
+ if(vozSelecionada) utter.voice=vozSelecionada; 
+ utter.lang='pt-BR'; utter.rate=0.9; utter.pitch=1.2; utter.volume=1; 
+ speechSynthesis.speak(utter)
+}
+function testarVoz(){
+ if(typeof speechSynthesis==='undefined'){alert('❌ Seu navegador não suporta voz!');return} 
+ speechSynthesis.cancel(); 
+ let letraTeste=['B','I','N','G','O'][Math.floor(Math.random()*5)]; 
+ let rangesTeste={B:[1,15],I:[16,30],N:[31,45],G:[46,60],O:[61,75]}; 
+ if(modoBolas==55) rangesTeste={B:[1,11],I:[12,22],N:[23,33],G:[34,44],O:[45,55]}
+ else if(modoBolas==90) rangesTeste={B:[1,18],I:[19,36],N:[37,54],G:[55,72],O:[73,90]}
+ let r=rangesTeste[letraTeste]; 
+ let numTeste=Math.floor(Math.random()*(r[1]-r[0]+1))+r[0]; 
+ falar(letraTeste,numTeste)
+}
+function mostrarVitoriaGlobal(ganhadoras){
+ if(!ganhadoras||ganhadoras.length==0) return
+ ganhadoras.forEach(g=>{if(!ganhadorasAnunciadas.has(g.perfil.id)){ganhadorasAnunciadas.add(g.perfil.id); historicoGanhadoras.push({...g,bola:current,totalSorteados:drawn.length,horario:new Date().toLocaleTimeString()})}})
+ let modal=document.getElementById('modalVitoria'); if(!modal) return; let textoVitoriaEl=document.getElementById('textoVitoria'); let subVitoriaEl=document.getElementById('subVitoria'); let perfilVitoriaEl=document.getElementById('perfilVitoria')
+ let temCheia=ganhadoras.some(g=>g.isCheia); let temLinha=ganhadoras.some(g=>g.isLinha)
+ let titulo=temCheia?'BINGO! 🎉':'BINGO 5! 🎯 TANTO FAZ LADO!'
+ let subtitulo=''
+ if(temCheia && temLinha) subtitulo=`${ganhadoras.filter(g=>g.isCheia).length} COMPLETA + ${ganhadoras.filter(g=>g.isLinha).length} LINHA(S) DE 5 - TANTO FAZ LADO!`
+ else if(temCheia) subtitulo=ganhadoras.length==1?'CARTELA COMPLETA!':`${ganhadoras.length} CARTELAS COMPLETAS!`
+ else subtitulo=ganhadoras.length==1?'5 EM LINHA - TANTO FAZ O LADO!':`${ganhadoras.length} COM 5 EM LINHA - TANTO FAZ LADO!`
+ if(textoVitoriaEl) textoVitoriaEl.innerText=titulo; if(subVitoriaEl) subVitoriaEl.innerText=subtitulo
+ let listaHTML=ganhadoras.map(g=>{
+   let tipoBadge=g.isCheia?'<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 text-black text-[9px] font-black px-2 py-1 rounded-full">CHEIA</span>':'<span class="bg-gradient-to-r from-violet-500 to-cyan-400 text-white text-[9px] font-black px-2 py-1 rounded-full">5 TANTO FAZ LADO</span>'
+   let linhasInfo=g.isLinha?`<div class="text-[8px] text-white/40 mt-1">${g.check.linhas.length} linha(s) - Horizontal/Vertical/Diagonal</div>`:`<div class="text-[8px] text-white/40 mt-1">24/24 números!</div>`
+   return `<div class="glass border ${g.isCheia?'border-emerald-400/40 bg-emerald-400/10':'border-violet-500/40 bg-violet-500/10'} rounded-[14px] p-3 flex justify-between items-center"><div class="text-left"><div class="font-black text-[13px] flex items-center gap-2">PERFIL ${g.perfil.perfilNum} ${tipoBadge}</div><div class="text-[10px] text-white/60 mono mt-1">${g.perfil.id} • ${g.perfil.modo}B</div>${linhasInfo}</div><button onclick="usarPerfil('${g.perfil.id}'); fecharVitoria()" class="bg-white text-black font-black px-3 py-1.5 rounded-full text-[10px] hover:bg-white/90 transition">VER</button></div>`
+ }).join('')
+ if(perfilVitoriaEl) perfilVitoriaEl.innerHTML=`<div class="mt-4 space-y-2 max-h-[280px] overflow-y-auto scrollbar-none pr-1">${listaHTML}</div><div class="mt-3 pt-3 border-t border-white/[0.06] text-[9px] text-white/30 font-medium">Bola ${current} - Letra ${getLetra(current)} - ${drawn.length}/${modoBolas} • Tanto faz o lado!</div>`
+ modal.classList.remove('hidden'); renderPerfis()
+ if(vozAtiva){setTimeout(()=>{let primeira=ganhadoras[0]; let tipo=primeira.isCheia?'CHEIA':'LINHA'; falarGanhadora(primeira.perfil.perfilNum, tipo)},1200)}
+ let projInfo=document.getElementById('projInfo'); if(projInfo){projInfo.innerHTML=`<div class="bg-white text-black font-black px-6 py-3 rounded-full animate-pulse text-[14px] shadow-[0_0_20px_rgba(255,255,255,0.5)]">🏆 ${subtitulo} - PERFIL ${ganhadoras[0].perfil.perfilNum}${ganhadoras.length>1?` +${ganhadoras.length-1}`:''}</div>`}
+ salvar()
+}
+function fecharVitoria(){let modal=document.getElementById('modalVitoria'); if(modal) modal.classList.add('hidden')}
+function limparGanhadorasAnunciadas(){if(historicoGanhadoras.length==0){alert('Nenhuma ganhadora');return} if(!confirm(`Limpar ${historicoGanhadoras.length} ganhadoras?`)) return; ganhadorasAnunciadas.clear(); historicoGanhadoras=[]; salvar(); renderPerfis(); renderGrade()}
+function getHistoricoGanhadorasHTML(){if(historicoGanhadoras.length==0) return '<div class="text-center py-4 text-white/20 text-[10px]">Nenhuma ganhadora ainda</div>'; return historicoGanhadoras.slice().reverse().map(h=>{let badge=h.isCheia?'<span class="bg-gradient-to-r from-emerald-400 to-cyan-400 text-black text-[7px] px-1.5 py-0.5 rounded-full font-black">CHEIA</span>':'<span class="bg-gradient-to-r from-violet-500 to-cyan-400 text-white text-[7px] px-1.5 py-0.5 rounded-full font-black">5 LADO</span>'; return `<div class="glass p-2.5 rounded-full flex justify-between items-center text-[11px] font-medium border border-white/[0.04]"><span>PERFIL ${h.perfil.perfilNum} ${badge} • ${getLetra(h.bola)}${h.bola}</span><span class="text-white/40 mono text-[9px]">${h.horario} • ${h.totalSorteados}/${modoBolas}</span></div>`}).join('')}
+
+let projGloboBolas=[], projGloboCtx=null, projGirando=false, projInicializado=false
+function ativarProjetor(){let tela=document.getElementById('telaProjetor'); if(!tela) return; tela.classList.remove('hidden'); document.body.style.overflow='hidden'; if(!projInicializado){setTimeout(()=>{initProjGlobo(); projInicializado=true},100)} renderProj()}
+function desativarProjetor(){let tela=document.getElementById('telaProjetor'); if(!tela) return; tela.classList.add('hidden'); document.body.style.overflow=''}
+function initProjGlobo(){let canvas=document.getElementById('projGloboCanvas'); if(!canvas) return; projGloboCtx=canvas.getContext('2d'); let cx=230, cy=230; projGloboBolas=[]; for(let i=0;i<32;i++){let ang=Math.random()*Math.PI*2, r=Math.random()*110; projGloboBolas.push({x:cx+Math.cos(ang)*r, y:cy+Math.sin(ang)*r, vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4, num:Math.floor(Math.random()*modoBolas)+1, cor:['#a855f7','#22d3ee','#ffffff','#e879f9'][Math.floor(Math.random()*4)], raio:12+Math.random()*6})} animarProjGlobo()}
+function animarProjGlobo(){if(!projGloboCtx) return; let cx=230, cy=230, raio=210; function frame(){if(!projGloboCtx) return; if(document.getElementById('telaProjetor').classList.contains('hidden')){requestAnimationFrame(frame); return} projGloboCtx.clearRect(0,0,460,460); let speed=projGirando?3.5:1; projGloboBolas.forEach(b=>{b.x+=b.vx*speed; b.y+=b.vy*speed; let dx=b.x-cx, dy=b.y-cy, dist=Math.sqrt(dx*dx+dy*dy); if(dist+b.raio>raio){let ang=Math.atan2(dy,dx); b.x=cx+Math.cos(ang)*(raio-b.raio); b.y=cy+Math.sin(ang)*(raio-b.raio); let nx=Math.cos(ang), ny=Math.sin(ang), dot=b.vx*nx+b.vy*ny; b.vx-=2*dot*nx; b.vy-=2*dot*ny} b.vx*=0.998; b.vy*=0.998; projGloboCtx.beginPath(); projGloboCtx.arc(b.x,b.y,b.raio,0,Math.PI*2); projGloboCtx.fillStyle=b.cor; projGloboCtx.fill(); projGloboCtx.fillStyle='black'; projGloboCtx.font=`bold ${b.raio*0.85}px JetBrains Mono`; projGloboCtx.textAlign='center'; projGloboCtx.textBaseline='middle'; projGloboCtx.fillText(b.num,b.x,b.y+1)}); requestAnimationFrame(frame)} frame()}
+function girarProjGloboAnimacao(numero, cb){projGirando=true; let status=document.getElementById('projGloboStatus'); if(status) status.innerText='● GIRANDO... '+getLetra(numero)+numero; projGloboBolas.forEach(b=>{b.vx=(Math.random()-0.5)*18; b.vy=(Math.random()-0.5)*18}); setTimeout(()=>{projGirando=false; let bola=document.getElementById('projBola'); if(!bola){if(cb)cb();return} bola.style.transform='translateY(-50px) scale(0.3)'; bola.style.opacity='0'; setTimeout(()=>{document.getElementById('projNumero').innerText=numero; document.getElementById('projLetra').innerText=getLetra(numero); bola.style.transform='translateY(10px) scale(1.2)'; bola.style.opacity='1'; setTimeout(()=>{bola.style.transform='translateY(0) scale(1)'; if(status) status.innerText='● PRONTO • '+drawn.length+'/'+modoBolas; if(cb)cb()},350)},300)},1800)}
+function renderProj(){
+ let tela=document.getElementById('telaProjetor'); if(!tela||tela.classList.contains('hidden')) return;
+ document.getElementById('projNumero').innerText=current||'?';
+ document.getElementById('projLetra').innerText=current?getLetra(current):'B';
+ let totalEl=document.getElementById('projTotal'); if(totalEl) totalEl.innerText=`${drawn.length}/${modoBolas}`;
+ let infoSorteadosEl=document.getElementById('projInfoSorteados'); if(infoSorteadosEl) infoSorteadosEl.innerText=`${drawn.length}/${modoBolas}`;
+ let infoEl=document.getElementById('projInfo'); 
+ if(infoEl){
+  if(current){
+    infoEl.innerHTML=`<div class="text-center"><p class="bg-gradient-to-r from-violet-400 to-cyan-300 bg-clip-text text-transparent font-black text-[22px] tracking-wide">LETRA ${getLetra(current)} • NÚMERO ${current} • TANTO FAZ LADO!</p><p class="text-white/50 text-[12px] mt-2 font-medium">${drawn.length}/${modoBolas} sorteados • Globo 460px • Modelo anterior restaurado</p></div>`
+  } else {
+    infoEl.innerHTML=`<div class="text-center"><p class="text-white/30 text-[13px] font-medium tracking-wide">Aguardando sorteio... Modelo anterior restaurado • Globo 460px</p></div>`
+  }
+ }
+ let ultimosEl=document.getElementById('projUltimos'); 
+ if(ultimosEl){
+  let ult=drawn.slice(-18).reverse();
+  if(ult.length==0){
+    ultimosEl.innerHTML=`<div class="text-center py-12 text-white/20"><div class="w-14 h-14 mx-auto rounded-full glass flex items-center justify-center text-xl mb-3 border border-white/[0.06]">🎲</div><p class="text-[11px] font-medium">Nenhum número sorteado</p><p class="text-[10px] text-white/20 mt-1">Gire o globo - Modelo anterior</p></div>`
+  } else {
+    ultimosEl.innerHTML=ult.map((n,idx)=>`<div class="glass ${idx==0?'!border-white bg-white/[0.12] shadow-[0_0_16px_rgba(255,255,255,0.15)] !border-white/30':''} p-3 rounded-[14px] flex items-center gap-3 border border-white/[0.06] transition-all"><div class="w-10 h-10 ${idx==0?'bg-white text-black shadow-[0_0_10px_rgba(255,255,255,0.4)]':'bg-gradient-to-br from-violet-500 to-cyan-400 text-white'} rounded-full flex flex-col items-center justify-center font-black shrink-0"><span class="text-[7px] opacity-60 tracking-[0.2em] font-bold">${getLetra(n)}</span><span class="text-[11px] mono -mt-0.5">${n}</span></div><div class="flex-1"><div class="font-black text-[12px] tracking-wide">${getLetra(n)}${n} • Letra ${getLetra(n)} número ${n}</div><div class="text-[9px] text-white/40 mono">${idx==0?'AGORA • Tanto faz o lado!':'• Sorteado há '+(idx+1)+' atrás'}</div></div>${idx==0?'<span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>':''}</div>`).join('')
+  }
+ }
+ let cartelaEl=document.getElementById('projCartelaAtiva');
+ if(cartelaEl){
+  cartelaEl.innerHTML=selectedPerfil?`<div class="glass p-3 rounded-[14px] border border-violet-500/20 bg-violet-500/[0.05]"><div class="font-black text-[11px] flex items-center gap-2">PERFIL ${selectedPerfil.perfilNum} <span class="bg-white text-black text-[7px] px-1.5 py-0.5 rounded-full font-black">ATIVA</span></div><div class="text-[9px] text-white/50 mono mt-1">${selectedPerfil.id} • ${selectedPerfil.modo}B • Modelo anterior</div></div>`:'<div class="text-center py-3 text-white/25 text-[10px]">Nenhuma cartela ativa<br><span class="text-[9px] text-white/15">Gere e clique USAR - Modelo anterior</span></div>'
+ }
+}
+
+function baixarCartelaPNG(id){
+ let p=perfis.find(x=>x.id==id); if(!p) return
+ let canvas=document.createElement('canvas'); let ctx=canvas.getContext('2d'); let W=800,H=900; canvas.width=W; canvas.height=H;
+ ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H); ctx.strokeStyle='#000'; ctx.lineWidth=6; ctx.strokeRect(4,4,W-8,H-8);
+ ctx.fillStyle='#000'; ctx.fillRect(4,4,W-8,90); ctx.fillStyle='#fff'; ctx.font='900 56px Outfit, Arial'; ctx.textAlign='center'; ['B','I','N','G','O'].forEach((L,i)=>{ctx.fillText(L,[80,240,400,560,720][i],65)});
+ ctx.fillStyle='#a855f7'; ctx.font='700 14px monospace'; ctx.textAlign='left'; ctx.fillText(`PERFIL ${p.perfilNum} • ${p.id} • ${p.modo}B • Modelo anterior • Tanto faz lado • ${modos.seq?'5':'-'} ${modos.cheia?'CHEIA':'-'}`,20,115);
+ let gridX=20,gridY=130,gridW=W-40,gridH=H-160,cellW=gridW/5,cellH=gridH/5;
+ for(let r=0;r<5;r++) for(let c=0;c<5;c++){let v=p.grid[r][c]; let x=gridX+c*cellW,y=gridY+r*cellH; let isFree=r==2&&c==2; ctx.fillStyle=isFree?'#000':(r+c)%2==0?'#f0f0f0':'#fff'; ctx.fillRect(x,y,cellW,cellH); ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.strokeRect(x,y,cellW,cellH); if(isFree){ctx.fillStyle='#fff'; ctx.font='900 28px Outfit'; ctx.textAlign='center'; ctx.fillText('BINGO',x+cellW/2,y+cellH/2-8); ctx.font='700 18px Outfit'; ctx.fillText('FREE',x+cellW/2,y+cellH/2+18)} else {ctx.fillStyle='#000'; ctx.font='900 72px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(v),x+cellW/2,y+cellH/2+5)}}
+ let link=document.createElement('a'); link.download=`BINGO-PERFIL-${p.perfilNum}-${p.id}-${p.modo}B-MODELO-ANTERIOR-TANTO-FAZ-LADO.png`; link.href=canvas.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+
+function gerarPDF(){
+ if(perfis.length==0){alert('⚠️ Gere cartelas primeiro!');return}
+ const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'})
+ let count=0,page=1
+ perfis.forEach((p,idx)=>{
+  if(!p||!p.grid) return;
+  let col=count%2, row=Math.floor(count/2)%3, cartelaW=92, cartelaH=85, gapX=6, gapY=6, startX=8, startY=14
+  let px=startX+col*(cartelaW+gapX), py=startY+row*(cartelaH+gapY)
+  doc.setFillColor(255,255,255); doc.setDrawColor(0,0,0); doc.setLineWidth(0.7); doc.rect(px,py,cartelaW,cartelaH,'FD')
+  doc.setFillColor(0,0,0); doc.rect(px,py,cartelaW,11,'F'); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(255,255,255)
+  ;['B','I','N','G','O'].forEach((L,i)=>{doc.text(L,[px+6,px+26,px+46,px+66,px+84][i],py+8)})
+  let gridY=py+11, gridH=cartelaH-11, cellW=cartelaW/5, cellH=gridH/5
+  for(let r=0;r<5;r++) for(let c=0;c<5;c++){let v=p.grid[r][c]; let cx=px+c*cellW, cy=gridY+r*cellH; let isFree=r==2&&c==2; doc.setFillColor(isFree?0:(r+c)%2==0?240:255, isFree?0:(r+c)%2==0?240:255, isFree?0:(r+c)%2==0?240:255); doc.setDrawColor(0,0,0); doc.setLineWidth(0.4); doc.rect(cx,cy,cellW,cellH,'FD'); if(isFree){doc.setFontSize(8); doc.setTextColor(255,255,255); doc.text('BINGO',cx+cellW/2,cy+6,{align:'center'}); doc.setFontSize(6); doc.text('FREE',cx+cellW/2,cy+10,{align:'center'})} else {doc.setFontSize(18); doc.setTextColor(0,0,0); doc.text(String(v),cx+cellW/2,cy+cellH/2+2.5,{align:'center'})}}
+  count++; if(count%6==0&&idx<perfis.length-1){doc.addPage(); doc.setFillColor(0,0,0); doc.rect(0,0,210,10,'F'); doc.setFontSize(10); doc.setTextColor(255,255,255); doc.text(`BINGO PREMIUM - MODELO ANTERIOR - ${perfis.length} CARTELAS - pág ${page+1} - Tanto faz lado`,10,6.5); page++; count=0}
+ })
+ let totalPages=doc.internal.getNumberOfPages(); for(let p=1;p<=totalPages;p++){doc.setPage(p); doc.setFontSize(6); doc.setTextColor(100,100,100); doc.text(`Bingo Premium - Modelo anterior - ${perfis.length} cartelas - ${modoBolas} bolas - 6 por folha - Tanto faz lado - ${modos.seq?'5':'-'} ${modos.cheia?'CHEIA':'-'}`,8,292)}
+ doc.save(`BINGO-MODELO-ANTERIOR-${perfis.length}x-${modoBolas}B-TANTO-FAZ-LADO.pdf`)
+}
+
+function salvar(){
+ try{
+  localStorage.setItem('bingo-modos',JSON.stringify(modos));
+  localStorage.setItem('bingo-premium-v2',JSON.stringify(perfis));
+  localStorage.setItem('bingo-ultimo-v2',ultimoPerfilNum);
+  localStorage.setItem('bingo-state-v2',JSON.stringify({modoBolas,drawn,selectedPerfilId:selectedPerfil?.id,modeloAtual,vozAtiva,tipoVoz,repeticao,velocidade,vozNome:vozSelecionada?vozSelecionada.name:null,ganhadorasAnunciadas:Array.from(ganhadorasAnunciadas),historicoGanhadoras}));
+ }catch(e){}
+}
+function carregar(){
+ try{
+  let m=localStorage.getItem('bingo-modos');
+  if(m){ let mm=JSON.parse(m); modos={seq:mm.seq!==undefined?mm.seq:true, cheia:mm.cheia!==undefined?mm.cheia:true}; }
+  let p=localStorage.getItem('bingo-premium-v2');if(p)perfis=JSON.parse(p);
+  let u=localStorage.getItem('bingo-ultimo-v2');if(u)ultimoPerfilNum=parseInt(u)||0;
+  let s=localStorage.getItem('bingo-state-v2');
+  if(s){let st=JSON.parse(s);modoBolas=st.modoBolas||75;drawn=st.drawn||[];modeloAtual=st.modeloAtual||'classic';if(st.selectedPerfilId)selectedPerfil=perfis.find(x=>x.id==st.selectedPerfilId)||null; if(st.vozAtiva!==undefined) vozAtiva=st.vozAtiva; if(st.tipoVoz) tipoVoz=st.tipoVoz; if(st.repeticao) repeticao=st.repeticao; if(st.velocidade) velocidade=st.velocidade; window._vozNomeSalva=st.vozNome; if(st.ganhadorasAnunciadas){ganhadorasAnunciadas=new Set(st.ganhadorasAnunciadas)} if(st.historicoGanhadoras){historicoGanhadoras=st.historicoGanhadoras}}
+ }catch(e){ perfis=[]; drawn=[]}
+}
+
+let globoBolas=[],globoCtx=null,globoGirando=false
+function initGlobo(){let c=document.getElementById('globoCanvas');if(!c)return;globoCtx=c.getContext('2d');globoBolas=[];for(let i=0;i<22;i++){let a=Math.random()*Math.PI*2,r=Math.random()*90;globoBolas.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,vx:(Math.random()-0.5)*2.5,vy:(Math.random()-0.5)*2.5,num:Math.floor(Math.random()*modoBolas)+1,raio:10+Math.random()*4})} animarGlobo()}
+function animarGlobo(){if(!globoCtx)return;function frame(){globoCtx.clearRect(0,0,360,360);let sp=globoGirando?3:1;globoBolas.forEach(b=>{b.x+=b.vx*sp;b.y+=b.vy*sp;let dx=b.x-180,dy=b.y-180,d=Math.sqrt(dx*dx+dy*dy);if(d+b.raio>150){let ang=Math.atan2(dy,dx);b.x=180+Math.cos(ang)*(150-b.raio);b.y=180+Math.sin(ang)*(150-b.raio);let nx=Math.cos(ang),ny=Math.sin(ang),dot=b.vx*nx+b.vy*ny;b.vx-=2*dot*nx;b.vy-=2*dot*ny}b.vx*=0.995;b.vy*=0.995;globoCtx.beginPath();globoCtx.arc(b.x,b.y,b.raio,0,Math.PI*2);globoCtx.fillStyle=['#a855f7','#fff','#22d3ee'][Math.floor(Math.random()*3)];globoCtx.fill();globoCtx.fillStyle='black';globoCtx.font=`bold ${b.raio*0.8}px JetBrains Mono`;globoCtx.textAlign='center';globoCtx.fillText(b.num,b.x,b.y+1)});requestAnimationFrame(frame)}frame()}
+function girarGlobo(num,cb){globoGirando=true;globoBolas.forEach(b=>{b.vx=(Math.random()-0.5)*10;b.vy=(Math.random()-0.5)*10});setTimeout(()=>{globoGirando=false;let bola=document.getElementById('bolaSaida');bola.style.transform='scale(0.3)';bola.style.opacity='0';setTimeout(()=>{document.getElementById('bolaNumero').innerText=num;document.getElementById('bolaLetra').innerText=getLetra(num);bola.style.transform='scale(1.2)';bola.style.opacity='1';setTimeout(()=>{bola.style.transform='scale(1)';if(cb)cb()},250)},250)},1400)}
+
+window.onload=()=>{
+ try{
+   carregar();
+   if(typeof speechSynthesis!=='undefined'){
+    speechSynthesis.onvoiceschanged=()=>{carregarVozes(); if(window._vozNomeSalva){let enc=vozes.find(v=>v.name==window._vozNomeSalva); if(enc) vozSelecionada=enc; atualizarUIConfig(); atualizarUIModos()}}
+    setTimeout(()=>{carregarVozes(); atualizarUIConfig(); atualizarUIModos(); if(window._vozNomeSalva){let enc=vozes.find(v=>v.name==window._vozNomeSalva); if(enc) vozSelecionada=enc; let sel=document.getElementById('selectVoz'); if(sel) sel.value=window._vozNomeSalva}},800)
+    setTimeout(()=>{carregarVozes(); atualizarUIConfig(); atualizarUIModos()},1500)
+   }
+   let btn=document.getElementById('bola'+modoBolas); if(btn){document.querySelectorAll('.bolaBtn').forEach(b=>b.className='bolaBtn px-3 py-1 rounded-full border border-white/[0.08] text-[10px] text-white/40 bg-black/40'); btn.className='bolaBtn px-3 py-1 rounded-full bg-white text-black font-bold text-[10px] shadow-[0_0_16px_rgba(255,255,255,0.4)]'}
+   let cfg=document.getElementById('bolaCfg'+modoBolas); if(cfg){document.querySelectorAll('.bolaBtn-config').forEach(b=>b.className='bolaBtn-config px-3 py-1.5 rounded-full text-[10px] border border-white/10 bg-black/40 text-white/40'); cfg.className='bolaBtn-config px-3 py-1.5 rounded-full text-[10px] bg-white text-black font-bold'}
+   if(drawn.length>0){let n=drawn[drawn.length-1]; document.getElementById('bolaNumero').innerText=n; document.getElementById('bolaLetra').innerText=getLetra(n)}
+   initGlobo(); renderGrade(); renderUltimos(); renderPerfis(); renderGanhadora(); atualizarUIConfig(); atualizarUIModos()
+   console.log('✅ BINGO PREMIUM - MODELO ANTERIOR RESTAURADO - Violet/Cyan - Tanto faz lado - 100%')
+ } catch(e){ console.error('Erro iniciar',e); try{initGlobo(); renderGrade(); renderPerfis();}catch(e2){} }
+}
+document.addEventListener('keydown',e=>{if(e.key=='Escape'){desativarProjetor(); fecharConfig()}})
+document.addEventListener('click',e=>{if(e.target.id=='overlay') fecharConfig()})
+</script>
+</body>
+</html>
